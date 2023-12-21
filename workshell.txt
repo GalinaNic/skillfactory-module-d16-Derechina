@@ -1,0 +1,48 @@
+python manage.py shell
+from news.models import *
+u1 = User.objects.create_user(username='Анастасия')
+u2 = User.objects.create_user(username='Елена')
+a1 = Author.objects.create(user=u1)
+a2 = Author.objects.create(user=u2)
+cat1 = Category.objects.create(name='Красота')
+cat2 = Category.objects.create(name='Здоровье')
+cat3 = Category.objects.create(name='Мода')
+cat4 = Category.objects.create(name='Макияж')
+p1 = Post.objects.create(author=a1, title='Русская красота', post_type='NE', text='Красивее русских женщин нет')
+p2 = Post.objects.create(author=a2, title='Модные новинки', post_type='AR', text='В моде натуральные ткани ярких цветов')
+p3 = Post.objects.create(author=a1, title='Повседневный макияж', post_type='AR', text='Макияж для рабочего дня должен быть нейтральным')
+p1.category.add(cat1,cat4)
+p2.category.add(cat3,cat2)
+p3.category.add(cat4,cat3)
+com1 = Comment.objects.create(post=p1, user=u1, text='Я согласна, русские девушки-самые красивые')
+com2 = Comment.objects.create(post=p2, user=u2, text='Яркие цвета поднимают настроение')
+com3 = Comment.objects.create(post=p3, user=u1, text='Макияж не должен быть вызывающим')
+com4 = Comment.objects.create(post=p1, user=u2, text='Многие красивые женщины мира имеют русские корни')
+p1.like()
+p2.like()
+p3.dislike()
+p1.rating
+p2.rating
+p3.rating
+com1.like()
+com2.dislike()
+com3.like()
+com4.like()
+com1.rating
+com2.rating
+com3.rating
+com4.rating
+a1.update_rating()
+a2.update_rating()
+a1.rating
+a2.rating
+best_user = Author.objects.order_by('-rating').values('user__username', 'rating').first()
+best_user
+best_post = Post.objects.order_by('-rating').values('post_time', 'author__user__username', 'rating', 'title').first()
+best_post
+best_post_for_preview = Post.objects.order_by('-rating').first()
+best_post
+best_post_for_preview = Post.objects.order_by('-rating').first()
+best_post_for_preview.preview()
+comments = Comment.objects.filter(post=best_post_for_preview).values('date_in', 'user__username', 'rating', 'text')
+comments
