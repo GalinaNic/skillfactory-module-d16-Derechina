@@ -7,6 +7,7 @@ from .forms import PostForm
 from .models import Post, Category
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic import TemplateView
+from django.core.cache import cache
 
 
 class NewsList(ListView):
@@ -21,6 +22,14 @@ class NewsDetail(DetailView):
     model = Post
     template_name = 'post_detail.html'
     context_object_name = 'post'
+
+    def get_object(self, *args, **kwargs):
+        obj = cache.get(f'post-{self.kwargs["pk"]}', None)
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'post-{self.kwargs["pk"]}', obj)
+
+        return obj
 
 
 class NewsSearch(ListView):

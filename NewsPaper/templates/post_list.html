@@ -3,6 +3,13 @@
 
 {% load custom_filters %}
 
+{% load cache %}
+
+    {% cache 30 header %}
+        {% block header %}
+        {% endblock header %}
+    {% endcache %}
+
 {% block content %}
 {% if posts %}
     <h2>Количество постов: {{ posts|length }}</h2>
